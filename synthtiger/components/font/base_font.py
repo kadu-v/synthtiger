@@ -127,7 +127,7 @@ class BaseFont(Component):
             return path
 
         # https://en.wikipedia.org/wiki/Backslash
-        text = text.replace("\\", "＼")
+        # text = text.replace("\\", "＼")
 
         ids = [self._ids[key].get(char) for char in text]
         if None in ids:
