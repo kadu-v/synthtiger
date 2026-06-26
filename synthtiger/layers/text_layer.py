@@ -5,10 +5,12 @@ MIT license
 """
 
 import numpy as np
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, features
 
 from synthtiger import utils
 from synthtiger.layers.layer import Layer
+
+_HAS_RAQM = features.check("raqm")
 
 
 class TextLayer(Layer):
@@ -153,6 +155,10 @@ class TextLayer(Layer):
         bbox = self._get_bbox(text, font, vertical)
         width, height = bbox[2:]
 
+        kwargs = {}
+        if direction is not None:
+            kwargs["direction"] = direction
+
         image = Image.new("RGBA", (width, height))
         draw = ImageDraw.Draw(image)
         draw.text(
@@ -161,7 +167,7 @@ class TextLayer(Layer):
             fill=color,
             font=font,
             stroke_width=stroke_width,
-            direction=direction,
+            **kwargs,
         )
         image = np.array(image, dtype=np.float32)
 
@@ -169,14 +175,20 @@ class TextLayer(Layer):
 
     def _get_bbox(self, text, font, vertical):
         direction = self._get_direction(vertical)
+        kwargs = {}
+        if direction is not None:
+            kwargs["direction"] = direction
 
         if not vertical:
             ascent, descent = font.getmetrics()
-            width = font.getsize(text, direction=direction)[0]
+            left, top, right, bottom = font.getbbox(text, **kwargs)
+            width = right - left
             height = ascent + descent
             bbox = [0, -ascent, width, height]
         else:
-            width, height = font.getsize(text, direction=direction)
+            left, top, right, bottom = font.getbbox(text, **kwargs)
+            width = right - left
+            height = bottom - top
             bbox = [-width // 2, 0, width, height]
 
         return bbox
@@ -184,9 +196,12 @@ class TextLayer(Layer):
     def _get_inner_bbox(self, text, font, bold, vertical):
         stroke_width = self._get_stroke_width(bold)
         direction = self._get_direction(vertical)
+        kwargs = {}
+        if direction is not None:
+            kwargs["direction"] = direction
 
         mask, offset = font.getmask2(
-            text, stroke_width=stroke_width, direction=direction
+            text, stroke_width=stroke_width, **kwargs,
         )
         bbox = mask.getbbox()
         left = max(bbox[0] + offset[0], 0)
@@ -204,5 +219,6 @@ class TextLayer(Layer):
         return stroke_width
 
     def _get_direction(self, vertical):
-        direction = "ltr" if not vertical else "ttb"
-        return direction
+        if not _HAS_RAQM:
+            return None
+        return "ltr" if not vertical else "ttb"
