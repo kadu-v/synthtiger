@@ -1,0 +1,64 @@
+[project]
+name = "synthtiger"
+dynamic = ["version"]
+description = "Synthetic text image generator for OCR model"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.11"
+authors = [
+    { name = "Moonbin Yim" },
+    { name = "Yoonsik Kim" },
+    { name = "Han-Cheol Cho" },
+    { name = "Sungrae Park" },
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Image Processing",
+    "Topic :: Scientific/Engineering :: Image Recognition",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dependencies = [
+    "arabic-reshaper",
+    "blend-modes",
+    "fonttools",
+    "imgaug",
+    "numpy<2",
+    "opencv-python",
+    "pillow>=8.2.0",
+    "pygame",
+    "python-bidi",
+    "pytweening",
+    "pyyaml",
+    "regex",
+    "scipy",
+]
+
+[project.scripts]
+synthtiger = "synthtiger.main:main"
+
+[project.urls]
+Homepage = "https://github.com/clovaai/synthtiger"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+path = "synthtiger/_version.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["synthtiger"]
+
+[tool.hatch.build.targets.sdist]
+include = ["synthtiger/"]
