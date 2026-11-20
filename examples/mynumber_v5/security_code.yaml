@@ -67,8 +67,11 @@ corpus:
       augmentation: 0
     - {paths: [], weights: [], augmentation: 0}
 font:
-  paths: [resources/mynumber_v5/fonts/shippori.ttf]
-  weights: [1]
+  paths:
+    - resources/mynumber_v5/fonts/mincho-fonts/similar-preferred
+    - resources/mynumber_v5/fonts/mincho-fonts/similar-rest
+    - resources/mynumber_v5/fonts/mincho-fonts/other
+  weights: [1, 1, 1]
   size: [24, 40]
   bold: 0
 image_postprocess:

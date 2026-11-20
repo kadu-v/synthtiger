@@ -10,6 +10,7 @@ from synthtiger.components.image_effect.additive_gaussian_noise import (
 from synthtiger.components.image_effect.brightness import Brightness
 from synthtiger.components.image_effect.coarse_dropout import CoarseDropout
 from synthtiger.components.image_effect.contrast import Contrast
+from synthtiger.components.image_effect.defocus_blur import DefocusBlur
 from synthtiger.components.image_effect.dilate import Dilate
 from synthtiger.components.image_effect.elastic_distortion import ElasticDistortion
 from synthtiger.components.image_effect.erode import Erode
@@ -21,12 +22,14 @@ from synthtiger.components.image_effect.median_blur import MedianBlur
 from synthtiger.components.image_effect.motion_blur import MotionBlur
 from synthtiger.components.image_effect.resample import Resample
 from synthtiger.components.image_effect.shadow import Shadow
+from synthtiger.components.image_effect.unsharp_mask import UnsharpMask
 
 __all__ = [
     "AdditiveGaussianNoise",
     "Brightness",
     "CoarseDropout",
     "Contrast",
+    "DefocusBlur",
     "Dilate",
     "ElasticDistortion",
     "Erode",
@@ -38,4 +41,5 @@ __all__ = [
     "MotionBlur",
     "Resample",
     "Shadow",
+    "UnsharpMask",
 ]

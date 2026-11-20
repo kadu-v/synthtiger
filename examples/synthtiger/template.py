@@ -199,6 +199,13 @@ class SynthTiger(templates.Template):
             **config.get("corpus", {}),
         )
         self.font = components.BaseFont(**config.get("font", {}))
+        if optional:
+            if len(self.font._paths) != len(self.font.paths) or not all(self.font._counts):
+                raise ValueError("Every configured font path must exist and contain fonts")
+            for group, paths in enumerate(self.font._paths):
+                order = sorted(range(len(paths)), key=paths.__getitem__)
+                self.font._paths[group] = [paths[index] for index in order]
+                self.font._tables[group] = self.font._tables[group][order]
         self.texture = components.Switch(
             components.BaseTexture(), **config.get("texture", {})
         )

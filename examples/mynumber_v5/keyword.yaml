@@ -68,7 +68,7 @@ corpus:
       augmentation: 0
     - {paths: [], weights: [], augmentation: 0}
 font:
-  paths: [resources/mynumber_v5/fonts/zenkaku.otf]
+  paths: [resources/mynumber_v5/fonts/font-jp]
   weights: [1]
   size: [20, 32]
   bold: 0
