@@ -351,6 +351,13 @@ class SynthTiger(templates.Template):
             offset = output_size["offset"]
             bboxes = [bbox * fit_scale + [*offset, 0, 0] for bbox in bboxes]
             glyph_bboxes = [bbox * fit_scale + [*offset, 0, 0] for bbox in glyph_bboxes]
+            if "zoom" in output_size:
+                bounds = output_size["size"]
+                for boxes in (bboxes, glyph_bboxes):
+                    for bbox in boxes:
+                        start = np.clip(bbox[:2], [0, 0], bounds)
+                        end = np.clip(bbox[:2] + bbox[2:], [0, 0], bounds)
+                        bbox[:] = [*start, *(end - start)]
             if padding is not None:
                 character_height *= fit_scale
                 padding, support = _measure_padding(
@@ -669,6 +676,9 @@ def _fit_output_size(images, config):
     width, height = [int(round(value * scale)) for value in config["base"]]
     source_height, source_width = images[0].shape[:2]
     fit_scale = min(width / source_width, height / source_height)
+    if "zoom" in config:
+        zoom = float(np.random.uniform(*config["zoom"]))
+        fit_scale *= zoom
     offset = [
         (width - source_width * fit_scale) / 2,
         (height - source_height * fit_scale) / 2,
@@ -715,13 +725,16 @@ def _fit_output_size(images, config):
         )
         for source in images[1:]
     ]
-    return outs, {
+    meta = {
         "base": list(config["base"]),
         "scale": scale,
         "size": [width, height],
         "fit_scale": fit_scale,
         "offset": offset,
     }
+    if "zoom" in config:
+        meta["zoom"] = zoom
+    return outs, meta
 
 
 def _resolve_paths(value, root):
@@ -771,8 +784,12 @@ def _validate_options(config):
 
     if "output_size" in config:
         value = config["output_size"]
-        if not isinstance(value, dict) or set(value) != {"base", "scale"}:
-            raise ValueError("output_size needs base and scale")
+        if (
+            not isinstance(value, dict)
+            or not {"base", "scale"} <= set(value)
+            or set(value) - {"base", "scale", "zoom"}
+        ):
+            raise ValueError("output_size needs base, scale, and optional zoom")
         base = value["base"]
         if (
             not isinstance(base, (list, tuple))
@@ -783,6 +800,10 @@ def _validate_options(config):
         pair(value["scale"], "output_size.scale")
         if value["scale"][0] <= 0 or any(round(v * value["scale"][0]) < 1 for v in base):
             raise ValueError("output_size.scale must produce positive canvas dimensions")
+        if "zoom" in value:
+            pair(value["zoom"], "output_size.zoom")
+            if value["zoom"][0] <= 0:
+                raise ValueError("output_size.zoom must be positive")
     if "horizontal_pad" in config:
         value = config["horizontal_pad"]
         if (
