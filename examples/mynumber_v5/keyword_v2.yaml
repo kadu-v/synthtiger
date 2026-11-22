@@ -1,0 +1,82 @@
+coord_output: false
+mask_output: false
+glyph_coord_output: false
+glyph_mask_output: false
+vertical: false
+quality: [85, 100]
+visibility_check: true
+midground: 0
+texture: {prob: 0}
+background_texture:
+  prob: 0.5
+  args:
+    paths: [resources/mynumber_v5/backgrounds/images]
+    weights: [1]
+    alpha: [1, 1]
+    grayscale: 0
+    crop: 1
+image_color: {gray: [25, 70], alpha: [1, 1], colorize: 0}
+character_pad: [0, 0.03]
+output_size: {base: [127, 40], scale: [1.0, 2.0], zoom: [1.02, 1.08]}
+colormap2:
+  paths: [resources/colormap/iiit5k_gray.txt]
+  weights: [1]
+  k: 2
+  alpha: [1, 1]
+  colorize: 1
+colormap3:
+  paths: [resources/colormap/iiit5k_gray.txt]
+  weights: [1]
+  k: 3
+  alpha: [1, 1]
+  colorize: 1
+color: {gray: [0, 255], alpha: [1, 1], colorize: 1}
+shape: {prob: 0}
+style: {prob: 0}
+layout:
+  weights: [1, 0]
+  args:
+    - {space: [0, 1], line_align: [middle]}
+    - {}
+transform:
+  prob: 0.5
+  args:
+    weights: [1, 1, 0, 0, 1, 0, 2]
+    args:
+      - {percents: [[0.95, 1], [1, 1]], aligns: [[0, 0], [0, 0]]}
+      - {percents: [[1, 1], [0.95, 1]], aligns: [[0, 0], [0, 0]]}
+      - {}
+      - {}
+      - {weights: [1, 0], angle: [0, 3], ccw: 0.5}
+      - {}
+      - {angle: [0, 5], ccw: 0.5}
+pad: {prob: 0}
+postprocess:
+  args:
+    - {prob: 0.5, args: {scale: [1, 4], per_channel: 0}}
+    - {prob: 0.3, args: {sigma: [0, 1]}}
+    - {prob: 0.1, args: {size: [0.8, 1]}}
+    - {prob: 0}
+corpus:
+  weights: [1, 0]
+  args:
+    - paths: [resources/mynumber_v5/corpora/keyword.txt]
+      weights: [1]
+      min_length: 4
+      max_length: 4
+      augmentation: 0
+    - {paths: [], weights: [], augmentation: 0}
+font:
+  paths: [resources/mynumber_v5/fonts/font-jp]
+  weights: [1]
+  size: [20, 32]
+  bold: 0
+image_postprocess:
+  scope: all
+  args:
+    - {prob: 1, args: {k: [5, 11], angle: [0, 180]}}
+    - {prob: 1, args: {radius: [1, 2]}}
+    - {prob: 1, args: {scale: [4, 10], per_channel: 0}}
+unsharp:
+  prob: 0.5
+  args: {radius: [0.5, 1.5], percent: [100, 200], threshold: [2, 5]}
